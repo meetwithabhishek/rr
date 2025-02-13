@@ -4,7 +4,8 @@ rr is a collection of helpful terminal utilities.
 
 # Utilities in rr  
 
-- Escape (Interpret the escape sequences)
+- **escape** (interpret the escape sequences)
+- **to-table** (converts the JSON array to a table)
  
 # Installation 
 
