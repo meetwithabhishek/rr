@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 
 	merry "github.com/ansel1/merry/v2"
 	"github.com/charmbracelet/lipgloss"
@@ -35,18 +36,50 @@ var toTableCmd = &cobra.Command{
 
 		var headers []string
 
-		for _, v := range inputJson {
-			ob, ok := v.(map[string]interface{})
-			if !ok {
-				return merry.New("failed to cast inputJson to map[string]interface{}")
-			}
-			for ob_key := range ob {
-				headers = append(headers, ob_key)
-			}
+		// gettings the list of headers from the first object in the JSON array
+		v := inputJson[0]
+
+		ob, ok := v.(map[string]interface{})
+		if !ok {
+			return merry.New("failed to cast inputJson to map[string]interface{}")
+		}
+		for ob_key := range ob {
+			headers = append(headers, ob_key)
 		}
 
-		if maxColumns > 0 {
-			headers = headers[:maxColumns]
+		if maxColumnsOpt > 0 {
+			if len(headersAtleastOpt) > 0 {
+
+				var chosenHeaders []string
+				var leftHeaders []string
+				for _, hdr := range readCommaSeparatedString(headersAtleastOpt) {
+					for _, v := range headers {
+						if hdr == v {
+							chosenHeaders = append(chosenHeaders, v)
+						} else {
+							leftHeaders = append(leftHeaders, v)
+						}
+					}
+				}
+
+				headers = append(chosenHeaders, leftHeaders...)
+			}
+
+			headers = headers[:maxColumnsOpt]
+		}
+
+		if len(headersOpt) > 0 {
+			var recomputedHeaders []string
+
+			for _, v := range readCommaSeparatedString(headersOpt) {
+				for _, hdr := range headers {
+					if v == hdr {
+						recomputedHeaders = append(recomputedHeaders, hdr)
+					}
+				}
+			}
+
+			headers = recomputedHeaders
 		}
 
 		t := table.New().
@@ -81,9 +114,25 @@ var toTableCmd = &cobra.Command{
 	},
 }
 
-var maxColumns int
+func readCommaSeparatedString(s string) []string {
+	values := strings.Split(s, ",")
+
+	var finalValues []string
+	for _, v := range values {
+		finalValues = append(finalValues, strings.TrimSpace(v))
+	}
+
+	return finalValues
+}
+
+var maxColumnsOpt int
+var headersOpt string
+var headersAtleastOpt string
 
 func init() {
 	rootCmd.AddCommand(toTableCmd)
-	toTableCmd.Flags().IntVarP(&maxColumns, "max-columns", "m", 0, "maximum number of columns allowed in the table")
+	toTableCmd.Flags().IntVarP(&maxColumnsOpt, "max-columns", "m", 0, "maximum number of columns allowed in the table")
+	toTableCmd.Flags().StringVarP(&headersOpt, "headers", "", "", "headers/columns of the table, its a comma separated list")
+	toTableCmd.Flags().StringVarP(&headersAtleastOpt, "headers-atleast", "", "", `if max-columns option is used, then atleast include 
+following headers in the table, its a comma separated list`)
 }
