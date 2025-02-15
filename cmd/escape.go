@@ -12,7 +12,8 @@ import (
 var escapeCmd = &cobra.Command{
 	Use:     "escape",
 	Aliases: []string{"e"},
-	Short:   "interpret the escape sequences",
+	Short:   "Interpret the escape sequences",
+	Long:    "Interpret the escape sequences in the data passed in stdin",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		replacer := strings.NewReplacer(
 			`\\`, `\`,
