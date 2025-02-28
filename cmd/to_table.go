@@ -24,14 +24,17 @@ var toTableCmd = &cobra.Command{
 	Long:    "Take the JSON from the stdin and give a table in the output",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		// this does the trick
 		var inputReader io.Reader = cmd.InOrStdin()
 
 		inputJson := make([]interface{}, 0)
 
 		err := json.NewDecoder(inputReader).Decode(&inputJson)
 		if err != nil {
-			return err
+			return merry.Prepend(err, "input is not a JSON Array maybe")
+		}
+
+		if len(inputJson) < 1 {
+			return merry.New("0 length JSON Array")
 		}
 
 		var headers []string

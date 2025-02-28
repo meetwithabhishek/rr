@@ -6,7 +6,8 @@ rr is a collection of helpful terminal utilities.
 
 - **escape** (interpret the escape sequences)
 - **to-table** (converts the JSON array to a table)
- 
+- **hex** (encode/decode hex)
+
 # Installation 
 
 ```go
