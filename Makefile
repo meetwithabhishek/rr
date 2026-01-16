@@ -26,4 +26,7 @@ tidy:
 vendor: tidy
 	go mod vendor
 
-.PHONY: fmt lint install
+clean:
+	rm -rf rr
+
+.PHONY: fmt lint install install-fang build build-fang tidy vendor clean

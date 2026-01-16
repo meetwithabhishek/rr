@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"strings"
 
 	merry "github.com/ansel1/merry/v2"
@@ -24,7 +23,7 @@ var toTableCmd = &cobra.Command{
 	Long:    "Take the JSON from the stdin and give a table in the output",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		var inputReader io.Reader = cmd.InOrStdin()
+		var inputReader = cmd.InOrStdin()
 
 		inputJson := make([]interface{}, 0)
 
@@ -89,8 +88,8 @@ var toTableCmd = &cobra.Command{
 			Border(lipgloss.NormalBorder()).
 			BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
 			StyleFunc(func(row, col int) lipgloss.Style {
-				switch {
-				case row == 0:
+				switch row {
+				case 0:
 					return style
 				default:
 					return style

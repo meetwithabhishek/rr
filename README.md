@@ -12,6 +12,7 @@ Motivation is to make a swiss army knife of all the nice tools you would need in
 - **to-table** (converts the JSON array to a table)
 - **hex** (encode/decode hex)
 - **base64** (encode/decode base64)
+- **replace** (replace string)
 
 # Prerequisites  
 
